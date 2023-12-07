@@ -1,0 +1,11 @@
+POST http://localhost:3000/auth/sign-up HTTP/1.1
+Content-Type: application/json
+
+{
+  "firstName": "Brad",
+  "lastName": "Pitt",
+  "displayName": "bradpitt",
+  "password": "brad@gmail.com",
+  "email": "dude5@gmail.com",
+  "role": "customer"
+}

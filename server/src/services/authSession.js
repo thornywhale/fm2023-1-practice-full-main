@@ -16,7 +16,7 @@ module.exports.createSession = async (user, options = {}) => {
     user.password = undefined;
     return { user, tokenPair };
   } catch (error) {
-    next(new Error(error.message));
+    throw new Error(error.message);
   }
 };
 
@@ -28,6 +28,6 @@ module.exports.refreshSession = async (refreshToken) => {
     user.password = undefined;
     return { user, tokenPair };
   } catch (error) {
-    next(new Error(error.message));
+    throw new Error(error.message);
   }
 };

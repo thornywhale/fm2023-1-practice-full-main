@@ -1,6 +1,6 @@
 const createHTTPError = require('http-errors');
 
-const { User } = require('../models');
+const { User, RefreshToken } = require('../models');
 const { createSession, refreshSession } = require('../services/authSession');
 
 module.exports.signUp = async (req, res, next) => {
@@ -40,7 +40,7 @@ module.exports.refresh = async (req, res, next) => {
     const {
       body: { refreshToken },
     } = req;
-    const refreshTokenInstance = await refreshToken.findOne({
+    const refreshTokenInstance = await RefreshToken.findOne({
       where: {
         value: refreshToken,
       },
