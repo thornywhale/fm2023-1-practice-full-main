@@ -1,14 +1,17 @@
 const createHTTPError = require('http-errors');
 
 const { User } = require('../models');
-const { createTokenPair } = require('../services/jwtServices');
+const { createSession, refreshSession } = require('../services/authSession');
 
 module.exports.signUp = async (req, res, next) => {
   try {
     const { body } = req;
     const user = await User.create(body);
-    const tokenPair = await createTokenPair(user);
-    // res.status(201).send();
+    if (user) {
+      const data = await createSession(user);
+      return res.status(201).send({ data });
+    }
+    next(createHTTPError(400, 'Bad request'));
   } catch (error) {
     next(error);
   }
@@ -23,9 +26,8 @@ module.exports.signIn = async (req, res, next) => {
       where: { email },
     });
     if (user && (await user.comparePassword(password))) {
-      const tokenPair = await createTokenPair(user);
-      // const userWithToken = ;
-      return res.status(200).send({data: userWithToken});
+      const data = await createSession(user);
+      return res.status(200).send({ data });
     }
     next(createHTTPError(401, 'Not authorized'));
   } catch (error) {
@@ -35,7 +37,19 @@ module.exports.signIn = async (req, res, next) => {
 
 module.exports.refresh = async (req, res, next) => {
   try {
-    const tokenPair = await createTokenPair(user);
+    const {
+      body: { refreshToken },
+    } = req;
+    const refreshTokenInstance = await refreshToken.findOne({
+      where: {
+        value: refreshToken,
+      },
+    });
+    if (refreshTokenInstance) {
+      const data = await refreshSession(refreshTokenInstance);
+      return res.status(200).send({ data });
+    }
+    next(createHTTPError(400, 'Bad request'));
   } catch (error) {
     next(error);
   }
